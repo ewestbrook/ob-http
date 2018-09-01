@@ -49,7 +49,7 @@
     (path-prefix . :any)
     (resolve . :any)
     (max-time . :any)
-    (socket . :any))
+    (unix-socket . :any))
   "http header arguments")
 
 (defgroup ob-http nil
@@ -61,7 +61,7 @@
   :group 'ob-http
   :type 'integer)
 
-(defcustom ob-http:socket nil
+(defcustom ob-http:unix-socket nil
   "Unix socket to use for transport."
   :group 'ob-http
   :type 'string)
@@ -224,8 +224,8 @@
          (select (cdr (assoc :select params)))
          (resolve (cdr (assoc :resolve params)))
          (request-body (ob-http-request-body request))
-         (socket (or (cdr (assoc :socket params))
-                     ob-http:socket))
+         (unix-socket (or (cdr (assoc :unix-socket params))
+                     ob-http:unix-socket))
          (error-output (org-babel-temp-file "curl-error"))
          (args (append ob-http:curl-custom-arguments (list "-i"
                      (when (and proxy (not noproxy)) `("-x" ,proxy))
@@ -248,7 +248,7 @@
                      "--max-time"
                      (int-to-string (or (cdr (assoc :max-time params))
                                         ob-http:max-time))
-                     (when socket `("--unix-socket" ,socket))
+                     (when unix-socket `("--unix-socket" ,unix-socket))
                      "--globoff"
                      (ob-http-construct-url (ob-http-request-url request) params)))))
     (with-current-buffer (get-buffer-create "*curl commands history*")
